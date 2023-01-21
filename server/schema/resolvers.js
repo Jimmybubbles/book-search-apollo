@@ -6,16 +6,16 @@ const { signToken } = require("../utils/auth")
 
 const resolvers = {
     Query: {
-        
+
         // get a user by username
         me: async (parent, args, context) => {
 
-            if(context.user) {
+            if (context.user) {
                 const userData = await User
-                .findOne({ _id: context.user._id})
-                .select('__v -password')
-                .populate("books")
-                
+                    .findOne({ _id: context.user._id })
+                    .select('__v -password')
+                    .populate("books")
+
                 return userData;
             }
 
@@ -24,7 +24,7 @@ const resolvers = {
     },
 
     Mutations: {
-        
+
         addUser: async (parent, args) => {
             const user = await User.create(args);
             const token = signToken(user);
@@ -34,7 +34,7 @@ const resolvers = {
 
         login: async (parent, { email, password }) => {
             const user = await User.findOne({ email });
-            
+
             if (!user) {
                 throw new AuthenticationError("Incorrect login credentials!")
             };
@@ -61,7 +61,7 @@ const resolvers = {
                 const updatedUser = await User
                     .findOneAndUpdate(
                         { _id: context.user._id },
-                        { $addToSet: { savedBooks: bookData }},
+                        { $addToSet: { savedBooks: bookData } },
                         { new: true },
                     )
 
@@ -76,7 +76,7 @@ const resolvers = {
             if (context.user) {
                 const updatedUser = await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $pull: {savedBooks: {bookID}}},
+                    { $pull: { savedBooks: { bookID } } },
                     { new: true },
                 )
                 return updatedUser
@@ -86,7 +86,7 @@ const resolvers = {
         }
 
     }
-    
+
 }
 
 module.exports = resolvers;
